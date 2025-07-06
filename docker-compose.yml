@@ -85,7 +85,7 @@ services:
 
   celery_worker:
     build:
-      context: celery_tasks
+      context: notifications
       dockerfile: Dockerfile
     command: celery -A celery_app worker --loglevel=info
     depends_on:
@@ -98,7 +98,7 @@ services:
 
   celery_beat:
     build:
-      context: celery_tasks
+      context: notifications
       dockerfile: Dockerfile
     command: celery -A celery_app beat --loglevel=info
     depends_on:
