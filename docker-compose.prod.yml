@@ -118,17 +118,17 @@ services:
     networks:
       - app-network
 
-  certbot:
-    build:
-      context: ./certbot
-      dockerfile: Dockerfile
-      args:
-        DOMAIN_EMAIL: ${DOMAIN_EMAIL}
-        DOMAIN_URL: ${DOMAIN_URL}
-    ports:
-      - "6000:80"
-    volumes:
-      - ./nginx-debug/:/etc/nginx/
+#  certbot:
+#    build:
+#      context: ./certbot
+#      dockerfile: Dockerfile
+#      args:
+#        DOMAIN_EMAIL: ${DOMAIN_EMAIL}
+#        DOMAIN_URL: ${DOMAIN_URL}
+#    ports:
+#      - "6000:80"
+#    volumes:
+#      - ./nginx-debug/:/etc/nginx/
 
 
 volumes:
