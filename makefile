@@ -24,3 +24,6 @@ migrate:
 
 create_migration:
 	alembic -c ./server/alembic.ini revision --autogenerate -m "$(args)"
+
+run:
+	./dev.sh

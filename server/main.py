@@ -7,8 +7,8 @@ import datetime
 from sqlmodel.ext.asyncio.session import AsyncSession
 from starlette.middleware.cors import CORSMiddleware
 
-from db import engine
-from schema import Dictionary, Word, User, UserWord, UserDict, WordDict, UserDictionaryRequest, WordToLearnRequest, \
+from server.db import engine
+from server.schema import Dictionary, Word, User, UserWord, UserDict, WordDict, UserDictionaryRequest, WordToLearnRequest, \
     WordToReviewRequest, About
 from sqlmodel import select
 

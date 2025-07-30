@@ -12,7 +12,7 @@ sudo docker compose up --build -d db redis rabbitmq
 
 export $(grep -v '^#' .env | xargs)
 
-(cd server && uvicorn main:app --host 0.0.0.0 --port 8000) &
+(uvicorn server.main:app --host 0.0.0.0 --port 8000) &
 (cd bot && python main.py) &
 
 wait

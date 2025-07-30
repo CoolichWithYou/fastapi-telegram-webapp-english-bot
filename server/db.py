@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import create_async_engine
 
-from settings import Settings
+from server.settings import Settings
 
 settings = Settings()
 
