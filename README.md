@@ -20,7 +20,7 @@ Celery используется для уведомления неактивны
 
 ### Так выглядит взаимодействие с ботом через WebApp в телеграм:
 
-<div style="display: flex; flex-direction: row;">
+<div style="display: flex; flex-direction: column;">
     <img src="screenshots/menu_preview.png" alt="drawing" width="400px;"/>
     <img src="screenshots/learning.png" alt="drawing" width="290px;"/>
 </div>
