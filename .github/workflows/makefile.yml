@@ -53,4 +53,4 @@ jobs:
           done
 
       - name: Apply migrations
-        run: docker exec reword_fastapi /bin/bash -c "cd ../ && alembic -c /server/alembic.ini upgrade head"
+        run: docker exec reword_server /bin/bash -c "cd ../ && alembic -c /server/alembic.ini upgrade head"
