@@ -7,11 +7,11 @@ ENV = os.getenv("ENV", "dev")
 
 
 class Settings(BaseSettings):
-    db_name: str
-    db_user: str
-    db_password: str
-    db_host: str
-    db_port: int
+    POSTGRES_DB: str
+    POSTGRES_USER: str
+    POSTGRES_PASSWORD: str
+    DB_HOST: str
+    DB_PORT: int
 
     server_host: str
     server_port: int

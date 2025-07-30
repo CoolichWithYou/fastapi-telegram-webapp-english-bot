@@ -1,16 +1,7 @@
-from sqlalchemy import create_engine
-from sqlmodel import SQLModel, Session
+from sqlalchemy.ext.asyncio import create_async_engine
 
-from schema import User
-from settings import get_settings
+from settings import Settings
 
-settings = get_settings()
-engine = create_engine(f"postgresql://{settings.db_user}:{settings.db_password}@{settings.db_host}:{settings.db_port}/{settings.db_name}")
+settings = Settings()
 
-
-def create_db_and_tables():
-    SQLModel.metadata.create_all(engine)
-
-
-if __name__ == "__main__":
-    create_db_and_tables()
+engine = create_async_engine(settings.get_connection(), echo=True)

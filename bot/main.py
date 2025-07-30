@@ -17,6 +17,7 @@ from settings import get_settings
 
 settings = get_settings()
 
+
 class MainMenu(StatesGroup):
     START = State()
 
@@ -32,11 +33,14 @@ class Learning(StatesGroup):
 class Dictionaries(StatesGroup):
     START = State()
 
+
 class Statistics(StatesGroup):
     START = State()
 
+
 class About(StatesGroup):
     START = State()
+
 
 EXTEND_BTN_ID = "extend"
 
@@ -47,12 +51,12 @@ main_menu = Dialog(
             'don\'t know how to use? Visit "About"'
         ),
         Row(
-        Start(Const('Dictionaries'), id='dictionaries', state=Dictionaries.START),
-                Start(Const('Statistics'), id='statistics', state=Statistics.START)
+            Start(Const('Dictionaries'), id='dictionaries', state=Dictionaries.START),
+            Start(Const('Statistics'), id='statistics', state=Statistics.START)
         ),
         Row(
-        Start(Const("Learning"), id="learning", state=Learning.START),
-                Start(Const('Repetition'), id='repetition', state=Revising.START),
+            Start(Const("Learning"), id="learning", state=Learning.START),
+            Start(Const('Repetition'), id='repetition', state=Revising.START),
         ),
         Start(Const("About"), id="about", state=About.START),
         state=MainMenu.START
@@ -63,7 +67,8 @@ main_menu = Dialog(
 async def get_data(dialog_manager, **kwargs):
     user_id = dialog_manager.event.from_user.id
     async with aiohttp.ClientSession() as session:
-        async with session.get(f'http://{settings.server_host}:{settings.server_port}/api/user_dictionaries/{user_id}') as response:
+        async with session.get(
+                f'http://{settings.server_host}:{settings.server_port}/api/user_dictionaries/{user_id}') as response:
             response_text = await response.text()
             json_response = json.loads(response_text)
             if json_response:
@@ -71,10 +76,12 @@ async def get_data(dialog_manager, **kwargs):
                     dictionary['selected'] = '[✓]' if dictionary['selected'] else '[ ]'
             return json_response
 
+
 async def get_stats(dialog_manager, **kwargs):
     chat_id = dialog_manager.event.from_user.id
     async with aiohttp.ClientSession() as session:
-        async with session.get(f'http://{settings.server_host}:{settings.server_port}/api/statistics/{chat_id}') as response:
+        async with session.get(
+                f'http://{settings.server_host}:{settings.server_port}/api/statistics/{chat_id}') as response:
             response_text = await response.text()
             json_response = json.loads(response_text)
             return json_response
@@ -150,42 +157,20 @@ about = Dialog(
     )
 )
 
+
 async def review_word(dialog_manager, **kwargs):
     chat_id = dialog_manager.event.from_user.id
+
     async with aiohttp.ClientSession() as session:
-        async with session.get(f'http://{settings.server_host}:{settings.server_port}/api/word_to_review', params={'chat_id': chat_id}) as response:
+        async with session.get(
+                f'http://{settings.server_host}:{settings.server_port}/api/word_to_review',
+                params={'chat_id': chat_id}
+        ) as response:
             word = await response.text()
             json_word = json.loads(word)
             dialog_manager.dialog_data["word"] = json_word
 
-            if json_word['word']:
-                return {
-                    "english": json_word['word']['english'],
-                    "russian": json_word['word']['russian'],
-                    "count": json_word['word']['count'],
-                    "dictionary": json_word['word']['dictionary'],
-                    "id": json_word['word']['id'],
-                    "is_empty": False
-                }
-            else:
-                return {
-                    "english": "",
-                    "russian": "There are no words to repeat yet",
-                    "count": "",
-                    "dictionary": "",
-                    "id": "",
-                    "is_empty": True
-                }
-
-async def learn_word(dialog_manager, **kwargs):
-    chat_id = dialog_manager.event.from_user.id
-    async with aiohttp.ClientSession() as session:
-        async with session.get(f'http://{settings.server_host}:{settings.server_port}/api/word_to_learn', params={'chat_id': chat_id}) as response:
-            word = await response.text()
-            json_word = json.loads(word)
-            dialog_manager.dialog_data["word"] = json_word
-
-            if json_word['word']:
+            if json_word:
                 return {
                     "english": json_word['word']['english'],
                     "russian": json_word['word']['russian'],
@@ -199,6 +184,33 @@ async def learn_word(dialog_manager, **kwargs):
                     "id": -1,
                     "is_empty": True
                 }
+
+
+async def learn_word(dialog_manager, **kwargs):
+    chat_id = dialog_manager.event.from_user.id
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(f'http://{settings.server_host}:{settings.server_port}/api/word_to_learn',
+                               params={'chat_id': chat_id}) as response:
+            word = await response.text()
+            json_word = json.loads(word)
+            dialog_manager.dialog_data["word"] = json_word
+
+            if json_word:
+                return {
+                    "english": json_word['word']['english'],
+                    "russian": json_word['word']['russian'],
+                    "id": json_word['word']['id'],
+                    "is_empty": False
+                }
+            else:
+                return {
+                    "english": "There are no words to learn yet",
+                    "russian": " ",
+                    "id": -1,
+                    "is_empty": True
+                }
+
 
 async def on_know_clicked(callback: CallbackQuery, button, dialog_manager: DialogManager):
     user_id = callback.from_user.id
@@ -221,6 +233,7 @@ async def on_know_clicked(callback: CallbackQuery, button, dialog_manager: Dialo
     # Обновляем окно
     await dialog_manager.show()
 
+
 async def clicked_learn(callback: CallbackQuery, button, dialog_manager: DialogManager):
     user_id = callback.from_user.id
     word = dialog_manager.dialog_data.get("word")
@@ -242,11 +255,10 @@ async def clicked_learn(callback: CallbackQuery, button, dialog_manager: DialogM
     # Обновляем окно
     await dialog_manager.show()
 
+
 revising = Dialog(
     Window(
         Format(
-            "Memorization \(review {count}\)\n\n"
-            "{dictionary}\n\n"
             "{russian}\n\n"
             "{english}\n"
         ),
@@ -309,7 +321,8 @@ router = Router()
 @router.message(CommandStart())
 async def start(message: Message, dialog_manager: DialogManager):
     async with aiohttp.ClientSession() as session:
-        async with session.post(f'http://{settings.server_host}:{settings.server_port}/api/register_user/{message.chat.id}') as response:
+        async with session.post(
+                f'http://{settings.server_host}:{settings.server_port}/api/register_user/{message.chat.id}') as response:
             pass
 
     await dialog_manager.start(MainMenu.START)
