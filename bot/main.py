@@ -68,7 +68,7 @@ async def get_data(dialog_manager, **kwargs):
     user_id = dialog_manager.event.from_user.id
     async with aiohttp.ClientSession() as session:
         async with session.get(
-                f'http://{settings.server_host}:{settings.server_port}/api/user_dictionaries/{user_id}') as response:
+                f'http://{settings.SERVER_HOST}:{settings.SERVER_PORT}/api/user_dictionaries/{user_id}') as response:
             response_text = await response.text()
             json_response = json.loads(response_text)
             if json_response:
@@ -81,7 +81,7 @@ async def get_stats(dialog_manager, **kwargs):
     chat_id = dialog_manager.event.from_user.id
     async with aiohttp.ClientSession() as session:
         async with session.get(
-                f'http://{settings.server_host}:{settings.server_port}/api/statistics/{chat_id}') as response:
+                f'http://{settings.SERVER_HOST}:{settings.SERVER_PORT}/api/statistics/{chat_id}') as response:
             response_text = await response.text()
             json_response = json.loads(response_text)
             return json_response
@@ -89,7 +89,7 @@ async def get_stats(dialog_manager, **kwargs):
 
 async def get_about(dialog_manager, **kwargs):
     async with aiohttp.ClientSession() as session:
-        async with session.get(f'http://{settings.server_host}:{settings.server_port}/api/about') as response:
+        async with session.get(f'http://{settings.SERVER_HOST}:{settings.SERVER_PORT}/api/about') as response:
             response_text = await response.text()
             json_response = json.loads(response_text)
             return json_response
@@ -97,7 +97,7 @@ async def get_about(dialog_manager, **kwargs):
 
 async def update_dictionaries(dict_id: int, chat_id: int):
     async with aiohttp.ClientSession() as session:
-        async with session.post(f'http://{settings.server_host}:{settings.server_port}/api/update_dictionary',
+        async with session.post(f'http://{settings.SERVER_HOST}:{settings.SERVER_PORT}/api/update_dictionary',
                                 json={'dict_id': dict_id, 'chat_id': chat_id}) as response:
             pass
 
@@ -163,7 +163,7 @@ async def review_word(dialog_manager, **kwargs):
 
     async with aiohttp.ClientSession() as session:
         async with session.get(
-                f'http://{settings.server_host}:{settings.server_port}/api/word_to_review',
+                f'http://{settings.SERVER_HOST}:{settings.SERVER_PORT}/api/word_to_review',
                 params={'chat_id': chat_id}
         ) as response:
             word = await response.text()
@@ -190,7 +190,7 @@ async def learn_word(dialog_manager, **kwargs):
     chat_id = dialog_manager.event.from_user.id
 
     async with aiohttp.ClientSession() as session:
-        async with session.get(f'http://{settings.server_host}:{settings.server_port}/api/word_to_learn',
+        async with session.get(f'http://{settings.SERVER_HOST}:{settings.SERVER_PORT}/api/word_to_learn',
                                params={'chat_id': chat_id}) as response:
             word = await response.text()
             json_word = json.loads(word)
@@ -221,7 +221,7 @@ async def on_know_clicked(callback: CallbackQuery, button, dialog_manager: Dialo
         word_json = json.loads(word_str)
         async with aiohttp.ClientSession() as session:
             async with session.post(
-                    f'http://{settings.server_host}:{settings.server_port}/api/word_to_review',
+                    f'http://{settings.SERVER_HOST}:{settings.SERVER_PORT}/api/word_to_review',
                     json={
                         'chat_id': user_id,
                         'word_id': word_json['word']['id'],
@@ -243,7 +243,7 @@ async def clicked_learn(callback: CallbackQuery, button, dialog_manager: DialogM
         word_json = json.loads(word_str)
         async with aiohttp.ClientSession() as session:
             async with session.post(
-                    f'http://{settings.server_host}:{settings.server_port}/api/word_to_learn',
+                    f'http://{settings.SERVER_HOST}:{settings.SERVER_PORT}/api/word_to_learn',
                     json={
                         'chat_id': user_id,
                         'word_id': word_json['word']['id'],
@@ -322,14 +322,14 @@ router = Router()
 async def start(message: Message, dialog_manager: DialogManager):
     async with aiohttp.ClientSession() as session:
         async with session.post(
-                f'http://{settings.server_host}:{settings.server_port}/api/register_user/{message.chat.id}') as response:
+                f'http://{settings.SERVER_HOST}:{settings.SERVER_PORT}/api/register_user/{message.chat.id}') as response:
             pass
 
     await dialog_manager.start(MainMenu.START)
 
 
 async def main():
-    bot = Bot(token=settings.token)
+    bot = Bot(token=settings.TOKEN)
     dp = Dispatcher()
     dp.include_router(main_menu)
     dp.include_router(revising)

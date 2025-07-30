@@ -3,8 +3,6 @@ from functools import lru_cache
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-ENV = os.getenv("ENV", "dev")
-
 
 class Settings(BaseSettings):
     POSTGRES_DB: str
@@ -13,12 +11,12 @@ class Settings(BaseSettings):
     DB_HOST: str
     DB_PORT: int
 
-    server_host: str
-    server_port: int
+    SERVER_HOST: str
+    SERVER_PORT: int
 
-    token: str
+    TOKEN: str
 
-    chunk_size: int
+    CHUNK_SIZE: int
 
     RABBITMQ_DEFAULT_USER: str
     RABBITMQ_DEFAULT_PASS: str

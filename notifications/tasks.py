@@ -8,7 +8,7 @@ import requests
 
 settings = get_settings()
 
-bot = Bot(token=settings.token)
+bot = Bot(token=settings.TOKEN)
 
 @celery_app.task(bind=True, max_retries=3, default_retry_delay=60)
 def send_reminder_message(self, chat_id):
@@ -22,7 +22,7 @@ def send_reminders(self):
     try:
         users = get_inactive_users()
         tasks = [send_reminder_message.s(u['chat_id']) for u in users]
-        task_groups = [group(tasks[i:i + settings.chunk_size]) for i in range(0, len(tasks), settings.chunk_size)]
+        task_groups = [group(tasks[i:i + settings.CHUNK_SIZE]) for i in range(0, len(tasks), settings.CHUNK_SIZE)]
         for g in task_groups:
             g.apply_async()
     except RequestException as exc:
@@ -30,7 +30,7 @@ def send_reminders(self):
 
 def get_inactive_users():
     response = requests.get(
-        f'http://{settings.server_host}:{settings.server_port}/api/inactive_users',
+        f'http://{settings.SERVER_HOST}:{settings.SERVER_PORT}/api/inactive_users',
         timeout=10
     )
     response.raise_for_status()

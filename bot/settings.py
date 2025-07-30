@@ -5,9 +5,9 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    token: str
-    server_host: str
-    server_port: int
+    TOKEN: str
+    SERVER_HOST: str
+    SERVER_PORT: int
 
     model_config = SettingsConfigDict()
 
