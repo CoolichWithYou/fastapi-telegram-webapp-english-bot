@@ -12,8 +12,6 @@ services:
       - app-network
     environment:
       TOKEN: ${TOKEN}
-      SERVER_HOST: ${SERVER_HOST}
-      SERVER_PORT: ${SERVER_PORT}
 
   fastapi:
     build: ./server

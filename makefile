@@ -1,14 +1,26 @@
-webapp_run:
+.PHONY: lint test install
+
+SRC=. tests
+
+lint:
+	@echo "Running isort..."
+	cd server && isort $(SRC)
+
+	@echo "Running black..."
+	cd server && black $(SRC)
+
+	@echo "Running flake8..."
+	cd server && flake8 $(SRC)
+
+up:
 	sudo docker compose up --build
 
-db:
-	sudo ENV_FILE=.env.dev docker compose up --build -d db
-	cd bot && python main.py
+down:
+	sudo docker compose down
 
-dev:
-	tmux new-session -d -s myapp 'cd server && python pdb main.py' \; \
-	split-window -h 'cd bot && python pdb main.py' \; \
-	attach-session -t myapp
+migrate:
+	@echo "Applying migrations in alembic/versions..."
+	alembic -c ./server/alembic.ini upgrade head
 
-prod:
-	sudo ENV_FILE=.env.prod docker compose up --build
+create_migration:
+	alembic -c ./server/alembic.ini revision --autogenerate -m "$(args)"
