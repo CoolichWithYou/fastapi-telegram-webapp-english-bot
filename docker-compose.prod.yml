@@ -10,8 +10,10 @@ services:
       - ./bot:/app
     networks:
       - app-network
-    env_file:
-      .env
+    environment:
+      TOKEN: ${TOKEN}
+      SERVER_HOST: ${SERVER_HOST}
+      SERVER_PORT: ${SERVER_PORT}
 
   fastapi:
     build: ./server
@@ -24,8 +26,12 @@ services:
       - "8000:8000"
     networks:
       - app-network
-    env_file:
-      .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
 
   db:
     image: postgres:15
@@ -35,10 +41,12 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     networks:
       - app-network
-    env_file:
-      .env
 
   frontend:
     build:
@@ -53,24 +61,22 @@ services:
       - fastapi
     networks:
       - app-network
-    env_file:
-      .env
 
-#  nginx:
-#    image: nginx
-#    ports:
-#      - "80:80"
-#      - "443:443"
-#    depends_on:
-#      - fastapi
-#      - frontend
-#    volumes:
-#      - ./front/dist:/usr/share/nginx/html:ro
-#      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-#      - ./nginx/cert.pem:/etc/cert.pem:ro
-#      - ./nginx/key.pem:/etc/key.pem:ro
-#    networks:
-#      - app-network
+  nginx:
+    image: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - fastapi
+      - frontend
+    volumes:
+      - ./front/dist:/usr/share/nginx/html:ro
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/cert.pem:/etc/cert.pem:ro
+      - ./nginx/key.pem:/etc/key.pem:ro
+    networks:
+      - app-network
 
   redis:
     image: redis:7
@@ -87,8 +93,6 @@ services:
       - "15672:15672"
     networks:
       - app-network
-    env_file:
-      .env
 
   celery_worker:
     build:
@@ -101,8 +105,6 @@ services:
       - rabbitmq
     networks:
       - app-network
-    env_file:
-      .env
 
   celery_beat:
     build:
@@ -115,20 +117,18 @@ services:
       - rabbitmq
     networks:
       - app-network
-    env_file:
-      .env
 
-#  certbot:
-#    build:
-#      context: ./certbot
-#      dockerfile: Dockerfile
-#      args:
-#        DOMAIN_EMAIL: ${DOMAIN_EMAIL}
-#        DOMAIN_URL: ${DOMAIN_URL}
-#    ports:
-#      - "6000:80"
-#    volumes:
-#      - ./nginx-debug/:/etc/nginx/
+  certbot:
+    build:
+      context: ./certbot
+      dockerfile: Dockerfile
+      args:
+        DOMAIN_EMAIL: ${DOMAIN_EMAIL}
+        DOMAIN_URL: ${DOMAIN_URL}
+    ports:
+      - "6000:80"
+    volumes:
+      - ./nginx-debug/:/etc/nginx/
 
 
 volumes:
