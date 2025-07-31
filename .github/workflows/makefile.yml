@@ -59,4 +59,4 @@ jobs:
         run: docker exec category_server /bin/bash -c "cd /server && pytest --cache-clear"
 
       - name: Run linters inside FastAPI container
-        run: docker exec reword_server /bin/bash -c "cd /server && isort . && black . && flake8 ."
+        run: docker exec category_server /bin/bash -c "cd /server && isort . && black . && flake8 ."
