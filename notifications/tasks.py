@@ -11,23 +11,38 @@ settings = get_settings()
 
 bot = Bot(token=settings.TOKEN)
 
-@celery_app.task(bind=True, max_retries=3, default_retry_delay=60)
+TELEGRAM_API_URL = settings.get_telegram_bot_api()
+
+@celery_app.task(
+    bind=True,
+    max_retries=3,
+    default_retry_delay=60,
+    acks_late=True,
+)
 def send_reminder_message(self, chat_id):
+    payload = {
+        "chat_id": chat_id,
+        "text": "Our algorithms tell us that you might want to learn words! :) 🌱"
+    }
     try:
-        asyncio.run(bot.send_message(chat_id=chat_id, text="Our algorithms tell us that you might want to learn words! :) 🌱"))
+        response = requests.post(TELEGRAM_API_URL, json=payload, timeout=10)
+        response.raise_for_status()
     except Exception as exc:
         raise self.retry(exc=exc)
+
 
 @celery_app.task(bind=True, max_retries=3)
 def send_reminders(self):
     try:
         users = get_inactive_users()
         tasks = [send_reminder_message.s(u['chat_id']) for u in users]
-        task_groups = [group(tasks[i:i + settings.CHUNK_SIZE]) for i in range(0, len(tasks), settings.CHUNK_SIZE)]
-        for g in task_groups:
-            g.apply_async()
+
+        for i in range(0, len(tasks), settings.CHUNK_SIZE):
+            group(tasks[i:i + settings.CHUNK_SIZE]).apply_async()
+
     except RequestException as exc:
         raise self.retry(exc=exc)
+
 
 def get_inactive_users():
     response = requests.get(

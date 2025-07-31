@@ -28,6 +28,9 @@ class Settings(BaseSettings):
         password = self.RABBITMQ_DEFAULT_PASS
         return f'amqp://{user}:{password}@rabbitmq:5672//'
 
+    def get_telegram_bot_api(self):
+        return f'https://api.telegram.org/bot{self.TOKEN}/sendMessage'
+
 
 @lru_cache
 def get_settings():
