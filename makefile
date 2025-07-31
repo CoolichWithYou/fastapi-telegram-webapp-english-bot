@@ -1,6 +1,6 @@
 .PHONY: lint test install
 
-SRC=.
+SRC=. tests
 
 lint:
 	@echo "Running isort..."
@@ -27,3 +27,8 @@ create_migration:
 
 run:
 	./dev.sh
+
+test:
+	@echo "Running tests with pytest..."
+	export $$(grep -v '^#' .env | xargs) && \
+	pytest --cache-clear
