@@ -1,8 +1,8 @@
 import datetime
-from typing import Optional, List
+from typing import List, Optional
 
 from pydantic import BaseModel
-from sqlmodel import Field, Session, SQLModel, create_engine, Relationship
+from sqlmodel import Field, Relationship, SQLModel
 
 
 class UserWord(SQLModel, table=True):
@@ -10,22 +10,43 @@ class UserWord(SQLModel, table=True):
     user_id: int = Field(default=None, foreign_key="user.id")
     word_id: int = Field(default=None, foreign_key="word.id")
     count: int = 0
-    need_to_show: Optional[datetime.datetime] = Field(default=None, nullable=True)
-    created_at: Optional[datetime.datetime] = Field(default_factory=datetime.datetime.now, nullable=True)
+    need_to_show: Optional[datetime.datetime] = Field(
+        default=None,
+        nullable=True,
+    )
+    created_at: Optional[datetime.datetime] = Field(
+        default_factory=datetime.datetime.now, nullable=True
+    )
 
-    word: Optional["Word"] = Relationship(back_populates="user_words")
-    user: Optional["User"] = Relationship(back_populates="user_words")
+    word: Optional["Word"] = Relationship(
+        back_populates="user_words",
+    )
+    user: Optional["User"] = Relationship(
+        back_populates="user_words",
+    )
+
 
 class Testtt(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
+    id: Optional[int] = Field(
+        default=None,
+        primary_key=True,
+    )
+
 
 class UserDict(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
+    id: Optional[int] = Field(
+        default=None,
+        primary_key=True,
+    )
     user_id: int = Field(default=None, foreign_key="user.id")
     dict_id: int = Field(default=None, foreign_key="dictionary.id")
 
-    user: Optional["User"] = Relationship(back_populates="user_dicts")
-    dictionary: Optional["Dictionary"] = Relationship(back_populates="user_dicts")
+    user: Optional["User"] = Relationship(
+        back_populates="user_dicts",
+    )
+    dictionary: Optional["Dictionary"] = Relationship(
+        back_populates="user_dicts",
+    )
 
 
 class WordDict(SQLModel, table=True):
@@ -34,7 +55,9 @@ class WordDict(SQLModel, table=True):
     dict_id: int = Field(foreign_key="dictionary.id")
 
     word: Optional["Word"] = Relationship(back_populates="word_dicts")
-    dictionary: Optional["Dictionary"] = Relationship(back_populates="word_dicts")
+    dictionary: Optional["Dictionary"] = Relationship(
+        back_populates="word_dicts",
+    )
 
 
 class User(SQLModel, table=True):
@@ -45,12 +68,12 @@ class User(SQLModel, table=True):
     user_dicts: List[UserDict] = Relationship(back_populates="user")
     words: List["Word"] = Relationship(
         back_populates="users",
-        link_model=UserWord
+        link_model=UserWord,
     )
     dictionaries: List["Dictionary"] = Relationship(
-        back_populates="users",
-        link_model=UserDict
+        back_populates="users", link_model=UserDict
     )
+
 
 class Word(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -60,13 +83,13 @@ class Word(SQLModel, table=True):
     word_dicts: List[WordDict] = Relationship(back_populates="word")
     user_words: List[UserWord] = Relationship(back_populates="word")
     dictionaries: List["Dictionary"] = Relationship(
-        back_populates="words",
-        link_model=WordDict
+        back_populates="words", link_model=WordDict
     )
     users: List["User"] = Relationship(
         back_populates="words",
-        link_model=UserWord
+        link_model=UserWord,
     )
+
 
 class Dictionary(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -76,12 +99,13 @@ class Dictionary(SQLModel, table=True):
     user_dicts: List[UserDict] = Relationship(back_populates="dictionary")
     words: List[Word] = Relationship(
         back_populates="dictionaries",
-        link_model=WordDict
+        link_model=WordDict,
     )
     users: List[User] = Relationship(
         back_populates="dictionaries",
-        link_model=UserDict
+        link_model=UserDict,
     )
+
 
 class About(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -101,6 +125,7 @@ class KnowWord(BaseModel):
     user_id: int
     word_id: int
     know_the_word: bool
+
 
 class UserDictionaryRequest(BaseModel):
     chat_id: int

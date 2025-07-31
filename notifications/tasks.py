@@ -1,10 +1,11 @@
 import asyncio
+
+import requests
 from aiogram import Bot
 from celery import group
-from requests.exceptions import RequestException
 from celery_app import celery_app
+from requests.exceptions import RequestException
 from settings import get_settings
-import requests
 
 settings = get_settings()
 

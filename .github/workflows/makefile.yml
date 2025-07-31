@@ -54,3 +54,6 @@ jobs:
 
       - name: Apply migrations
         run: docker exec reword_server /bin/bash -c "cd ../ && alembic -c /server/alembic.ini upgrade head"
+
+      - name: Run linters inside FastAPI container
+        run: docker exec reword_server /bin/bash -c "cd /server && isort . && black . && flake8 ."

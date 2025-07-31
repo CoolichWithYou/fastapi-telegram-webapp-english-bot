@@ -1,18 +1,17 @@
 import asyncio
 import json
 
+from aiogram import Bot, Dispatcher, Router
 from aiogram.client.session import aiohttp
 from aiogram.enums import ParseMode
 from aiogram.filters import CommandStart
 from aiogram.fsm.state import State, StatesGroup
-
-from aiogram import Router, F, Bot, Dispatcher
-from aiogram.types import Message, CallbackQuery
-
-from aiogram_dialog import Dialog, Window, setup_dialogs, DialogManager, ShowMode
-from aiogram_dialog.widgets.text import Format, Const, List
-from aiogram_dialog.widgets.kbd import Checkbox, Button, Row, Cancel, Start, Select, Column
-
+from aiogram.types import CallbackQuery, Message
+from aiogram_dialog import (Dialog, DialogManager, ShowMode, Window,
+                            setup_dialogs)
+from aiogram_dialog.widgets.kbd import (Button, Cancel, Column, Row, Select,
+                                        Start)
+from aiogram_dialog.widgets.text import Const, Format
 from settings import get_settings
 
 settings = get_settings()
@@ -68,7 +67,8 @@ async def get_data(dialog_manager, **kwargs):
     user_id = dialog_manager.event.from_user.id
     async with aiohttp.ClientSession() as session:
         async with session.get(
-                f'http://{settings.SERVER_HOST}:{settings.SERVER_PORT}/api/user_dictionaries/{user_id}') as response:
+                f'http://{settings.SERVER_HOST}:{settings.SERVER_PORT}/api/user_dictionaries/{user_id}'
+        ) as response:
             response_text = await response.text()
             json_response = json.loads(response_text)
             if json_response:

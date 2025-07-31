@@ -1,6 +1,6 @@
 .PHONY: lint test install
 
-SRC=. tests
+SRC=.
 
 lint:
 	@echo "Running isort..."
