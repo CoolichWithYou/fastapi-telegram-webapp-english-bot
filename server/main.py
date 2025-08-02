@@ -3,15 +3,25 @@ from collections import defaultdict
 
 import uvicorn
 from fastapi import APIRouter, Depends, FastAPI, HTTPException
+from prometheus_fastapi_instrumentator import Instrumentator
 from sqlalchemy import func
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 from starlette.middleware.cors import CORSMiddleware
 
 from server.db import engine
-from server.schema import (About, Dictionary, User, UserDict,
-                           UserDictionaryRequest, UserWord, Word, WordDict,
-                           WordToLearnRequest, WordToReviewRequest)
+from server.schema import (
+    About,
+    Dictionary,
+    User,
+    UserDict,
+    UserDictionaryRequest,
+    UserWord,
+    Word,
+    WordDict,
+    WordToLearnRequest,
+    WordToReviewRequest,
+)
 
 
 async def get_session() -> AsyncSession:
@@ -455,6 +465,7 @@ async def statistics(
 
 
 app.include_router(router)
+Instrumentator().instrument(app).expose(app)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

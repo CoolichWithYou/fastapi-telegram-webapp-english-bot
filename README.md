@@ -80,22 +80,28 @@ Celery используется для уведомления неактивны
 
 Для запуска в production понадобятся следующие переменные среды:
 
-|      Переменная среды | Значение по умолчанию | Краткое описание                                   |
-|----------------------:|:----------------------|----------------------------------------------------|
-|           POSTGRES_DB | mydatabase            | имя базы данных                                    |
-|         POSTGRES_USER | postgres              | имя пользователя базы данных                       |
-|     POSTGRES_PASSWORD | password              | пароль базы данных                                 |
-|               DB_HOST | localhost             | адрес базы данных                                  |
-|               DB_PORT | 5432                  | порт базы данных                                   |
-|                 TOKEN | telegram_token        | тelegram токен бота                                |
-|           SERVER_HOST | localhost             | Ip адрес сервера                                   |
-|           SERVER_PORT | 8000                  | порт сервера                                       |
-|          DOMAIN_EMAIL | example@example.com   | почта, для создания сертификата                    |
-|            DOMAIN_URL | example.com           | домен, для создания сертификата                    |
-|            CHUNK_SIZE | 10                    | кол-во элементов в группе для отправки уведомлений |
-| RABBITMQ_DEFAULT_USER | user                  | имя пользователь для брокера сообщений             |
-| RABBITMQ_DEFAULT_PASS | password              | пароль пользователя для брокера сообщений          |
+|           Переменная среды | Пример значения по умолчанию | Краткое описание                                            |
+|---------------------------:|:-----------------------------|-------------------------------------------------------------|
+|                POSTGRES_DB | mydatabase                   | имя базы данных                                             |
+|              POSTGRES_USER | postgres                     | имя пользователя базы данных                                |
+|          POSTGRES_PASSWORD | password                     | пароль базы данных                                          |
+|                    DB_HOST | localhost                    | адрес базы данных                                           |
+|                    DB_PORT | 5432                         | порт базы данных                                            |
+|                      TOKEN | telegram_token               | тelegram токен бота                                         |
+|                SERVER_HOST | localhost                    | Ip адрес сервера                                            |
+|                SERVER_PORT | 8000                         | порт сервера                                                |
+|               DOMAIN_EMAIL | example@example.com          | почта, для создания сертификата                             |
+|                 DOMAIN_URL | example.com                  | домен, для создания сертификата                             |
+|                 CHUNK_SIZE | 10                           | кол-во элементов в группе для отправки уведомлений          |
+|      RABBITMQ_DEFAULT_USER | user                         | имя пользователь для брокера сообщений                      |
+|      RABBITMQ_DEFAULT_PASS | password                     | пароль пользователя для брокера сообщений                   |
+|     GF_SECURITY_ADMIN_USER | admin                        | Имя пользователя админки Grafana                            |
+| GF_SECURITY_ADMIN_PASSWORD | admin                        | Пароль пользователя админки Grafana                         |
+|     GF_USERS_ALLOW_SIGN_UP | false                        | Возможность самостоятельной регистрации новых пользователей |
 
 ### 4. Эндпоинты
 
-Эндпоинты можно посмотреть перейдя на `http://server_host/docs`
+Все Fastapi эндпоинты `http://localhost:8000/docs`
+Front `http://localhost:3001`
+RabbitMQ Admin `http://localhost:15672`
+Grafana `http://localhost:3000`

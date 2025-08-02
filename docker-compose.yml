@@ -56,21 +56,21 @@ services:
     env_file:
       .env
 
-#  nginx:
-#    image: nginx
-#    ports:
-#      - "80:80"
-#      - "443:443"
-#    depends_on:
-#      - fastapi
-#      - frontend
-#    volumes:
-#      - ./front/dist:/usr/share/nginx/html:ro
-#      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-#      - ./nginx/cert.pem:/etc/cert.pem:ro
-#      - ./nginx/key.pem:/etc/key.pem:ro
-#    networks:
-#      - app-network
+  nginx:
+    image: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - fastapi
+      - frontend
+    volumes:
+      - ./front/dist:/usr/share/nginx/html:ro
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/cert.pem:/etc/cert.pem:ro
+      - ./nginx/key.pem:/etc/key.pem:ro
+    networks:
+      - app-network
 
   redis:
     image: redis:7
@@ -118,17 +118,66 @@ services:
     env_file:
       .env
 
-#  certbot:
-#    build:
-#      context: ./certbot
-#      dockerfile: Dockerfile
-#      args:
-#        DOMAIN_EMAIL: ${DOMAIN_EMAIL}
-#        DOMAIN_URL: ${DOMAIN_URL}
-#    ports:
-#      - "6000:80"
-#    volumes:
-#      - ./nginx-debug/:/etc/nginx/
+  promtail:
+    image: grafana/promtail:2.9.3
+    ports:
+      - "9080:9080"
+    volumes:
+      - ./promtail.yml:/etc/promtail/config.yml
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      - app-network
+
+  loki:
+    hostname: loki
+    image: grafana/loki:latest
+    environment:
+      TZ: ${SYSTEM_TIMEZONE:-Europe/Moscow}
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./loki-config.yaml:/etc/loki/local-config.yaml
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - app-network
+
+  prometheus:
+    image: prom/prometheus:latest
+    restart: unless-stopped
+    container_name: reword_prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - app-network
+
+  grafana:
+    image: grafana/grafana
+    container_name: reword_grafana
+    restart: unless-stopped
+    depends_on:
+      - prometheus
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    networks:
+      - app-network
+
+  certbot:
+    build:
+      context: ./certbot
+      dockerfile: Dockerfile
+      args:
+        DOMAIN_EMAIL: ${DOMAIN_EMAIL}
+        DOMAIN_URL: ${DOMAIN_URL}
+    ports:
+      - "6000:80"
+    volumes:
+      - ./nginx-debug/:/etc/nginx/
 
 
 volumes:
