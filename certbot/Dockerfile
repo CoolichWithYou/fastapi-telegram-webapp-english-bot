@@ -5,7 +5,6 @@ EXPOSE 6000 80
 ARG DOMAIN_EMAIL
 ARG DOMAIN_URL
 
-# устанавливаем переменные среды в переменные
 ENV DOMAIN_EMAIL=$DOMAIN_EMAIL
 ENV DOMAIN_URL=$DOMAIN_URL
 

@@ -14,5 +14,6 @@ export $(grep -v '^#' .env | xargs)
 
 (uvicorn server.main:app --host 0.0.0.0 --port 8000) &
 (cd bot && python main.py) &
+(cd front && npm run dev) &
 
 wait

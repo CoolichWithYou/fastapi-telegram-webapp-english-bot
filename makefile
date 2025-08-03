@@ -32,3 +32,6 @@ test:
 	@echo "Running tests with pytest..."
 	export $$(grep -v '^#' .env | xargs) && \
 	pytest --cache-clear
+
+general:
+	sudo docker compose up --build bot fastapi db frontend redis rabbitmq celery_worker celery_beat promtail loki prometheus grafana

@@ -32,23 +32,24 @@ async def get_session() -> AsyncSession:
 def update_show_date(
     count: int, know_the_word: bool
 ) -> tuple[datetime.datetime | None, int] | None:
-    current_show_date = datetime.datetime.now()
+    now = datetime.datetime.now()
     if not know_the_word:
-        return current_show_date + datetime.timedelta(seconds=15), 1
+        return now + datetime.timedelta(seconds=15), 1
     match count:
         case 1:
-            return current_show_date + datetime.timedelta(minutes=25), 2
+            return now + datetime.timedelta(minutes=25), 2
         case 2:
-            return current_show_date + datetime.timedelta(hours=8), 3
+            return now + datetime.timedelta(hours=8), 3
         case 3:
-            return current_show_date + datetime.timedelta(days=1), 4
+            return now + datetime.timedelta(days=1), 4
         case 4:
-            return current_show_date + datetime.timedelta(days=3), 5
+            return now + datetime.timedelta(days=3), 5
         case 5:
-            return current_show_date + datetime.timedelta(days=14), 6
+            return now + datetime.timedelta(days=14), 6
         case 6:
             return None, 7
-    return None
+        case _:
+            return None
 
 
 router = APIRouter(prefix="/api")
@@ -76,7 +77,7 @@ async def get_learned_words(
     """return learned words for 24 hours"""
     statement = (
         select(UserWord)
-        .where(UserDict.user_id == user_id)
+        .where(UserWord.user_id == user_id)
         .where(UserWord.count != 7)
         .where(
             UserWord.created_at
