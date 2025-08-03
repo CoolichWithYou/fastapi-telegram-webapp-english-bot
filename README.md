@@ -101,7 +101,7 @@ Celery используется для уведомления неактивны
 
 ### 4. Эндпоинты
 
-Все Fastapi эндпоинты `http://localhost:8000/docs`
-Front `http://localhost:3001`
-RabbitMQ Admin `http://localhost:15672`
+Все Fastapi эндпоинты `http://localhost:8000/docs`  
+Front `http://localhost:3001`  
+RabbitMQ Admin `http://localhost:15672`  
 Grafana `http://localhost:3000`
