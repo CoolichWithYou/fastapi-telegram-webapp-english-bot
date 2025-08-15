@@ -12,7 +12,6 @@ interface TelegramWebApp {
     [key: string]: any;
   };
   ready: () => void;
-  // можно добавить другие методы и свойства, если нужно
 }
 
 interface Telegram {

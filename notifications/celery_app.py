@@ -5,7 +5,7 @@ settings = Settings()
 celery_app = Celery(
     "my_project",
     broker=settings.get_rabbit_connection(),
-    backend="redis://redis:6379/0"
+    backend="redis://redis:6377/0"
 )
 
 import tasks

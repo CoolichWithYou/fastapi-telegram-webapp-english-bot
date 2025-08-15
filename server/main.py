@@ -2,7 +2,7 @@ import datetime
 from collections import defaultdict
 
 import uvicorn
-from fastapi import APIRouter, Depends, FastAPI, HTTPException
+from fastapi import APIRouter, Depends, FastAPI, HTTPException, Path
 from prometheus_fastapi_instrumentator import Instrumentator
 from sqlalchemy import func
 from sqlmodel import select
@@ -22,11 +22,20 @@ from server.schema import (
     WordToLearnRequest,
     WordToReviewRequest,
 )
+from server.settings import get_settings
+
+settings = get_settings()
 
 
 async def get_session() -> AsyncSession:
     async with AsyncSession(engine) as session:
         yield session
+
+
+async def get_chat_id(chat_id: int = Path(...)) -> int:
+    if settings.DEBUG:
+        return settings.DEFAULT_USER_TELEGRAM_CHAT_ID
+    return chat_id
 
 
 def update_show_date(
@@ -55,6 +64,7 @@ def update_show_date(
 router = APIRouter(prefix="/api")
 app = FastAPI()
 
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -69,7 +79,7 @@ def health():
     return {"status": "ok"}
 
 
-@router.get("/learned_words")
+@router.get("/learned_words/{user_id}")
 async def get_learned_words(
     user_id: int,
     session: AsyncSession = Depends(get_session),
@@ -108,9 +118,12 @@ async def update_dictionary_status(
     user_dict: UserDictionaryRequest,
     session: AsyncSession = Depends(get_session),
 ):
+    print("mmm")
+    print(user_dict)
     statement = select(User).where(User.chat_id == user_dict.chat_id)
     result = await session.exec(statement)
     user = result.one()
+    print(f"iser: {user}")
 
     statement = (
         select(UserDict)
@@ -119,6 +132,7 @@ async def update_dictionary_status(
     )
     dictionary = await session.exec(statement)
     dictionary = dictionary.first()
+    print(f"icture: {dictionary}")
     character = " "
     if dictionary:
         await session.delete(dictionary)
@@ -135,7 +149,7 @@ async def update_dictionary_status(
 
 @router.get("/user_dictionaries/{chat_id}")
 async def get_user_dictionaries(
-    chat_id: int,
+    chat_id: int = Depends(get_chat_id),
     session: AsyncSession = Depends(get_session),
 ):
     statement = select(User).where(User.chat_id == chat_id)
@@ -186,9 +200,9 @@ async def get_words(
     return words
 
 
-@router.get("/word_to_review")
+@router.get("/word_to_review/{chat_id}")
 async def update_word_status(
-    chat_id: int,
+    chat_id: int = Depends(get_chat_id),
     session: AsyncSession = Depends(get_session),
 ):
     statement = select(User).where(User.chat_id == chat_id)
@@ -230,6 +244,7 @@ async def update_word_status(
         )
 
         return {"word": result}
+    return {"word": None}
 
 
 @router.post("/user_dictionary")
@@ -286,9 +301,9 @@ async def get_word_to_review(
     await session.refresh(user_word)
 
 
-@router.get("/word_to_learn")
+@router.get("/word_to_learn/{chat_id}")
 async def get_word_to_learn(
-    chat_id: int,
+    chat_id: int = Depends(get_chat_id),
     session: AsyncSession = Depends(get_session),
 ):
     statement = select(User).where(User.chat_id == chat_id)
@@ -331,6 +346,7 @@ async def get_word_to_learn(
         )
 
         return {"word": result}
+    return {"word": None}
 
 
 @router.post("/word_to_learn")
@@ -368,7 +384,7 @@ async def post_word_to_learn(
 
 @router.post("/register_user/{chat_id}")
 async def post_register_user(
-    chat_id: int,
+    chat_id: int = Depends(get_chat_id),
     session: AsyncSession = Depends(get_session),
 ):
     statement = select(User).where(User.chat_id == chat_id)
@@ -415,7 +431,7 @@ async def inactive_users(
 
 @router.get("/statistics/{chat_id}")
 async def statistics(
-    chat_id: int,
+    chat_id: int = Depends(get_chat_id),
     session: AsyncSession = Depends(get_session),
 ):
     statement = select(User).where(User.chat_id == chat_id)

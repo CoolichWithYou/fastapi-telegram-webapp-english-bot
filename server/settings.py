@@ -9,6 +9,8 @@ class Settings(BaseSettings):
     POSTGRES_PASSWORD: str
     DB_HOST: str
     DB_PORT: int
+    DEBUG: bool
+    DEFAULT_USER_TELEGRAM_CHAT_ID: int
 
     def get_connection(self):
         user = self.POSTGRES_USER

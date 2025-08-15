@@ -26,13 +26,6 @@ class UserWord(SQLModel, table=True):
     )
 
 
-class Testtt(SQLModel, table=True):
-    id: Optional[int] = Field(
-        default=None,
-        primary_key=True,
-    )
-
-
 class UserDict(SQLModel, table=True):
     id: Optional[int] = Field(
         default=None,

@@ -1,0 +1,12 @@
+.container {
+    padding: 1.5rem;
+    border-radius: 1.5rem;
+    border: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.content_alignment {
+    align-self: center;
+}

@@ -1,15 +1,18 @@
-// Dictionaries.tsx
 import {useState, useEffect} from "react";
-import PageWrapper from "../PageWrapper.tsx";
-import {useTelegram} from "../context/TelegramContext.tsx";
+import PageWrapper from "../PageWrapper/PageWrapper.tsx";
 import {backButton, init} from '@telegram-apps/sdk';
 import {useNavigate} from "react-router-dom";
+import {useTelegram} from "../context/TelegramContext.tsx";
 
 interface Dictionary {
     id: number;
     title: string;
     selected: boolean;
 }
+
+const API_URL = import.meta.env.VITE_API_URL;
+const defaultChatId = import.meta.env.VITE_DEFAULT_CHAT_ID;
+const debug = import.meta.env.DEBUG;
 
 export function Dictionaries() {
     const chatId = useTelegram()
@@ -20,38 +23,44 @@ export function Dictionaries() {
 
 
     useEffect(() => {
-        fetch(`/api/register_user/${chatId.chatId}`, {
+        const id = chatId.chatId ?? defaultChatId;
+        console.log(id)
+        console.log(defaultChatId)
+        fetch(`${API_URL}/api/register_user/${id}`, {
             method: "POST",
         })
     }, [chatId]);
 
     useEffect(() => {
-        init();
-        if (backButton.mount.isAvailable()) {
-            backButton.mount();
-            backButton.isMounted(); // true
-        }
-
-        if (backButton.show.isAvailable()) {
-          backButton.show();
-          backButton.isVisible(); // true
-        }
-
-        if (backButton.onClick.isAvailable()) {
-            function listener() {
-                backButton.hide()
-                backButton.unmount();
-                navigate('/')
+        if (debug == 'False') {
+            init();
+            if (backButton.mount.isAvailable()) {
+                backButton.mount();
+                backButton.isMounted();
             }
-            backButton.onClick(listener);
+
+            if (backButton.show.isAvailable()) {
+                backButton.show();
+                backButton.isVisible();
+            }
+
+            if (backButton.onClick.isAvailable()) {
+                function listener() {
+                    backButton.hide()
+                    backButton.unmount();
+                    navigate('/')
+                }
+
+                backButton.onClick(listener);
+            }
         }
     }, [navigate]);
 
     useEffect(() => {
-        if (!chatId) return;
 
+        const id = chatId.chatId ?? defaultChatId;
         setLoading(true);
-        fetch(`/api/user_dictionaries/${chatId.chatId}`)
+        fetch(`${API_URL}/api/user_dictionaries/${id}`)
             .then((response) => {
                 if (!response.ok) throw new Error("Failed to fetch dictionaries");
                 return response.json();
@@ -66,13 +75,14 @@ export function Dictionaries() {
             });
     }, [chatId]);
 
-    const toggleSelection = (id: number) => {
-        if (!chatId) return;
+    const toggleSelection = (dict_id: number) => {
 
-        fetch("/api/update_dictionary", {
+        const id = chatId.chatId ?? defaultChatId;
+
+        fetch(`${API_URL}/api/update_dictionary`, {
             method: "POST",
             headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({chat_id: chatId.chatId, dict_id: id}),
+            body: JSON.stringify({chat_id: id, dict_id: dict_id}),
         })
             .then((response) => {
                 if (!response.ok) throw new Error("Failed to update selection");
@@ -81,7 +91,7 @@ export function Dictionaries() {
             .then(() => {
                 setDictionaries((prev) =>
                     prev.map((dict) =>
-                        dict.id === id ? {...dict, selected: !dict.selected} : dict
+                        dict.id === dict_id ? {...dict, selected: !dict.selected} : dict
                     )
                 );
             })
@@ -93,21 +103,19 @@ export function Dictionaries() {
     return (
         <PageWrapper title="Dictionaries">
             {loading ? (
-                <p className="text-gray-500">Loading...</p>
+                <p>Loading...</p>
             ) : error ? (
-                <p className="text-red-500">Error: {error}</p>
+                <p>Error: {error}</p>
             ) : (
-                <ul className="">
+                <div>
                     {dictionaries.map((dict) => (
-                        <div className="list-item"
-                             key={dict.id}
-                             onClick={() => toggleSelection(dict.id)}
-                        >
+                        <div key={dict.id}
+                             onClick={() => toggleSelection(dict.id)}>
                             <span>{dict.title}</span>
                             {dict.selected ? <> [✓]</> : <> [ ]</>}
                         </div>
                     ))}
-                </ul>
+                </div>
             )}
         </PageWrapper>
     );

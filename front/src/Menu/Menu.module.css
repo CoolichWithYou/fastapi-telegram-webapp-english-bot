@@ -1,0 +1,22 @@
+.nav_just {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 100%;
+}
+
+.menu_container {
+    height: 15rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.nav_link {
+    padding: 1.5rem;
+    border-radius: 1.5rem;
+    border: 0;
+    width: 20rem;
+    display: flex;
+    justify-content: space-between;
+}
