@@ -1,27 +1,33 @@
 :root {
-  --font-family: system-ui, sans-serif;
-  --font-size: 16px;
-  --color-text: #222;
-  --color-bg: #fff;
+    --font-family: system-ui, sans-serif;
+    --font-size: 16px;
+    --color-text: #222;
+    --color-bg: #fff;
 
-  --spacing: 1rem;
-  --radius: 8px;
+    --spacing: 1rem;
+    --radius: 8px;
+    height: 100%;
 }
 
 a {
-  text-decoration: none;
+    text-decoration: none;
 }
 
-html, body {
-  margin: 0;
-  padding: 0;
+html, body, #root {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+}
+
+.main_container {
+    height: 100%;
 }
 
 body {
-  font-family: var(--font-family);
-  font-size: var(--font-size);
-  line-height: 1.5;
-  background-color: var(--color-bg);
-  color: var(--color-text);
-  -webkit-font-smoothing: antialiased;
+    font-family: var(--font-family);
+    font-size: var(--font-size);
+    line-height: 1.5;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    -webkit-font-smoothing: antialiased;
 }

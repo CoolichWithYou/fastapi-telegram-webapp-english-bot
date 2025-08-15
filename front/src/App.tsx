@@ -8,17 +8,15 @@ export default function App() {
 
     return (
         <Router>
-            <div>
-                <main>
-                    <Routes>
-                        <Route path="/" element={<Menu/>}/>
-                        <Route path="/dictionaries" element={<Dictionaries/>}/>
-                        <Route path="/learning" element={<WordTrainer mode="learn"/>}/>
-                        <Route path="/repetition" element={<WordTrainer mode="repeat"/>}/>
-                        <Route path="*" element={<Dictionaries/>}/>
-                    </Routes>
-                </main>
-            </div>
+            <main className={"main_container"}>
+                <Routes>
+                    <Route path="/" element={<Menu/>}/>
+                    <Route path="/dictionaries" element={<Dictionaries/>}/>
+                    <Route path="/learning" element={<WordTrainer mode="learn"/>}/>
+                    <Route path="/repetition" element={<WordTrainer mode="repeat"/>}/>
+                    <Route path="*" element={<Dictionaries/>}/>
+                </Routes>
+            </main>
         </Router>
     );
 }

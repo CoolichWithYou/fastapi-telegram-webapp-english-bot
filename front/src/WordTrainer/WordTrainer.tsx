@@ -1,9 +1,11 @@
 import {useState, useEffect} from "react";
 import PageWrapper from "../PageWrapper/PageWrapper.tsx";
 import {useTelegram} from "../context/TelegramContext.tsx";
-import styles from "./WordTrainer.module.css";
 import {backButton, init} from "@telegram-apps/sdk";
 import {useNavigate} from "react-router-dom";
+import TinderCard from 'react-tinder-card'
+import styles from "./WordTrainer.module.css";
+
 
 interface Word {
     id: number;
@@ -109,7 +111,17 @@ export default function WordTrainer({mode}: WordTrainerProps) {
                 console.error(err);
             });
     };
+    const onSwipe = (direction: string) => {
+        if (direction == 'right') {
+            handleResponse(true)
+        } else {
+            handleResponse(false)
+        }
+    }
 
+    const onCardLeftScreen = (myIdentifier: string) => {
+        console.log(myIdentifier + ' left the screen')
+    }
 
     return (
         <PageWrapper title={mode === "learn" ? "Learning" : "Repetition"}>
@@ -118,54 +130,49 @@ export default function WordTrainer({mode}: WordTrainerProps) {
             ) : error ? (
                 <p>Error: {error}</p>
             ) : word ? (
-                <div>
-                    <div>
-                        {mode === "learn" ? (
-                            <>
-                                <p>
-                                    {word.english}
-                                </p>
-                                <p
-                                    onClick={() => setRevealed(true)}
-                                    className={`text-xl italic cursor-pointer transition-opacity duration-300 ${
-                                        revealed ? "text-gray-700 opacity-100" : "text-gray-400 opacity-50"
-                                    }`}
-                                >
-                                    {revealed ? word.russian : "Нажми, чтобы показать перевод"}
-                                </p>
-                            </>
-                        ) : (
-                            <>
-                                <p>{word.russian}</p>
-                                <p
-                                    onClick={() => setRevealed(true)}
-                                    className={`text-3xl font-bold cursor-pointer transition-opacity duration-300 ${
-                                        revealed ? "text-indigo-800 opacity-100" : "text-gray-400 opacity-50"
-                                    }`}
-                                >
-                                    {revealed ? word.english : "Нажми, чтобы показать слово"}
-                                </p>
-                            </>
-                        )}
-                    </div>
 
-                    <div className={styles.knowledge_container}>
-                        <button className={styles.knowledge}
-                                onClick={() => handleResponse(true)}
-                        >
-                            Знаю
-                        </button>
-                        <button className={styles.knowledge}
-                                onClick={() => handleResponse(false)}>
-                            Не знаю
-                        </button>
+                <TinderCard onSwipe={onSwipe} onCardLeftScreen={() => onCardLeftScreen('fooBar')}>
+                    <div>
+                        <div>
+                            {mode === "learn" ? (
+                                <>
+                                    <p>
+                                        {word.english}
+                                    </p>
+                                    <p
+                                        onClick={() => setRevealed(true)}
+                                    >
+                                        {revealed ? word.russian : "Нажми, чтобы показать перевод"}
+                                    </p>
+                                </>
+                            ) : (
+                                <>
+                                    <p>{word.russian}</p>
+                                    <p
+                                        onClick={() => setRevealed(true)}
+                                    >
+                                        {revealed ? word.english : "Нажми, чтобы показать слово"}
+                                    </p>
+                                </>
+                            )}
+                        </div>
+                        <div className={styles.knowledge_container}>
+                            <button className={styles.knowledge}
+                                    onClick={() => handleResponse(true)}
+                            >
+                                Не знаю
+                            </button>
+                            <button className={styles.knowledge}
+                                    onClick={() => handleResponse(false)}>
+                                Знаю
+                            </button>
+                        </div>
                     </div>
-                </div>
+                </TinderCard>
             ) : (
                 <p>
                     Нет слов для {mode === "learn" ? "изучения" : "повторения"}.
                 </p>
             )}
-        </PageWrapper>
-    );
+        </PageWrapper>)
 }
