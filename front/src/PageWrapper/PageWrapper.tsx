@@ -9,7 +9,7 @@ export default function PageWrapper({title, children}: { title: string; children
     }, [title]);
     return (
         <div className={styles.container}>
-            <h1>{title}</h1>
+            <div className={styles.title}>{title}</div>
             <div className={styles.content_alignment}>
                 {children}
             </div>

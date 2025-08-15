@@ -3,6 +3,7 @@ import PageWrapper from "../PageWrapper/PageWrapper.tsx";
 import {backButton, init} from '@telegram-apps/sdk';
 import {useNavigate} from "react-router-dom";
 import {useTelegram} from "../context/TelegramContext.tsx";
+import styles from "./Dictionaries.module.css";
 
 interface Dictionary {
     id: number;
@@ -107,7 +108,7 @@ export function Dictionaries() {
             ) : error ? (
                 <p>Error: {error}</p>
             ) : (
-                <div>
+                <div className={styles.list}>
                     {dictionaries.map((dict) => (
                         <div key={dict.id}
                              onClick={() => toggleSelection(dict.id)}>

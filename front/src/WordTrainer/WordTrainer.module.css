@@ -2,7 +2,7 @@
     border-radius: 1.5rem;
     border: 0;
     width: 7rem;
-    height: 2rem;
+    height: 3rem;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -10,4 +10,13 @@
 
 .knowledge_container {
 display: flex;
+}
+
+.card {
+    width: 20rem;
+    height: 20rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
 }

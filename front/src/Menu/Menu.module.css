@@ -2,14 +2,15 @@
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    height: 100%;
+    height: 20rem;
 }
 
 .menu_container {
-    height: 15rem;
     display: flex;
     flex-direction: column;
     align-items: center;
+    height: 100%;
+    justify-content: space-around;
 }
 
 .nav_link {

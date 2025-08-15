@@ -132,7 +132,7 @@ export default function WordTrainer({mode}: WordTrainerProps) {
             ) : word ? (
 
                 <TinderCard onSwipe={onSwipe} onCardLeftScreen={() => onCardLeftScreen('fooBar')}>
-                    <div>
+                    <div className={styles.card}>
                         <div>
                             {mode === "learn" ? (
                                 <>
